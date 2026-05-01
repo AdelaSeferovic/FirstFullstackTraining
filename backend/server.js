@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const taskRoutes = require('./routes/taskRoutes');
+const gatewayRoutes = require('./routes/gatewayRoutes');
 
 const app = express();
 
@@ -21,5 +22,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/tasks', taskRoutes);
+
+app.use('/api/gateways', gatewayRoutes); 
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

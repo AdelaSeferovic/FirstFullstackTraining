@@ -3,53 +3,77 @@ import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState('');
+  const [gateways, setGateways] = useState([]);
+  const [stats, setStats] = useState({});
 
   useEffect(() => {
-    fetchTasks();
+    fetchGateways();
+    fetchStats();
   }, []);
 
-  const fetchTasks = async () => {
-    const res = await axios.get('http://localhost:5000/api/tasks');
-    setTasks(res.data);
+  const fetchGateways = async () => {
+    const res = await axios.get('http://localhost:5000/api/gateways');
+    setGateways(res.data);
   };
 
-  const addTask = async () => {
-    if (!title.trim()) return;
-
-    const res = await axios.post('http://localhost:5000/api/tasks', { title });
-    setTasks([...tasks, res.data]);
-    setTitle('');
-  };
-
-  const deleteTask = async (id) => {
-    await axios.delete(`http://localhost:5000/api/tasks/${id}`);
-    setTasks(tasks.filter((task) => task._id !== id));
+  const fetchStats = async () => {
+    const res = await axios.get('http://localhost:5000/api/gateways/stats');
+    setStats(res.data);
   };
 
   return (
     <div className="app">
-      <h1>Task Manager</h1>
+      <h1>Maturix Monitor</h1>
 
-      <div className="input-row">
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter a task"
-        />
-        <button onClick={addTask}>Add</button>
+      {/* Statistik kort */}
+      <div className="stats">
+        <div className="stat-card active">
+          <p>Active</p>
+          <h2>{stats.active}</h2>
+        </div>
+        <div className="stat-card inactive">
+          <p>Inactive</p>
+          <h2>{stats.inactive}</h2>
+        </div>
+        <div className="stat-card warning">
+          <p>Warning</p>
+          <h2>{stats.warning}</h2>
+        </div>
+        <div className="stat-card error">
+          <p>Error</p>
+          <h2>{stats.error}</h2>
+        </div>
       </div>
 
-      <ul>
-        {tasks.map((task) => (
-          <li key={task._id}>
-            <span>{task.title}</span>
-            <button onClick={() => deleteTask(task._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      {/* Gateway tabel */}
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>GatewayID</th>
+            <th>SimID</th>
+            <th>BatchID</th>
+            <th>Company</th>
+            <th>Last Seen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gateways.map((gateway) => (
+            <tr key={gateway._id}>
+              <td>
+                <span className={`badge ${gateway.status}`}>
+                  {gateway.status}
+                </span>
+              </td>
+              <td>{gateway.gatewayId}</td>
+              <td>{gateway.simId}</td>
+              <td>{gateway.batchId}</td>
+              <td>{gateway.company}</td>
+              <td>{new Date(gateway.lastSeen).toLocaleDateString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
