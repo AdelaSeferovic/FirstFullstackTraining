@@ -25,7 +25,6 @@ function App() {
     <div className="app">
       <h1>Maturix Monitor</h1>
 
-      {/* Statistik kort */}
       <div className="stats">
         <div className="stat-card active">
           <p>Active</p>
@@ -45,7 +44,6 @@ function App() {
         </div>
       </div>
 
-      {/* Gateway tabel */}
       <table>
         <thead>
           <tr>
